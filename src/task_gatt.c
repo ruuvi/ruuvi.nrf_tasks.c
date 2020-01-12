@@ -17,8 +17,6 @@
 #include "ruuvi_interface_rtc.h"
 #include "ruuvi_interface_scheduler.h"
 #include "ruuvi_interface_watchdog.h"
-#include "ruuvi_library.h"
-#include "ruuvi_library_ringbuffer.h"
 #include "task_advertisement.h"
 #include "task_communication.h"
 #include "task_gatt.h"

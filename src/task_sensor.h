@@ -15,16 +15,15 @@
  */
 #include "ruuvi_driver_error.h"
 #include "ruuvi_driver_sensor.h"
-#include "ruuvi_endpoints.h"
 
 typedef struct {
-  ruuvi_driver_sensor_t sensor,                       //!< Control structure for sensor.
-  ruuvi_driver_sensor_init_fp init,                   //!< Initialization function.
-  ruuvi_driver_sensor_configuration_t configuration,  //!< Sensor configuration.
-  uint16_t nvm_file,                                  //!< NVM file of configuration.
-  uint16_t nvm_record,                                //!< NVM record of configuration.
-  uint8_t  sensor_handle,                             //!< Handle of sensor.
-  ruuvi_driver_bus_t sensor_bus                       //!< Bus of sensor. 
+  ruuvi_driver_sensor_t sensor;                       //!< Control structure for sensor.
+  ruuvi_driver_sensor_init_fp init;                   //!< Initialization function.
+  ruuvi_driver_sensor_configuration_t configuration;  //!< Sensor configuration.
+  uint16_t nvm_file;                                  //!< NVM file of configuration.
+  uint16_t nvm_record;                                //!< NVM record of configuration.
+  uint8_t  handle;                                    //!< Handle of sensor.
+  ruuvi_driver_bus_t bus;                             //!< Bus of sensor. 
 }rt_sensor_ctx_t;
 
 /** @brief Initialize sensor CTX
@@ -106,7 +105,7 @@ rt_sensor_ctx_t * rt_sensor_find_backend (rt_sensor_ctx_t * const
  *         returned
  * @return NULL if requested sensor was not found.
  */
-rt_sensor_ctx_t * rt_sensor_find_provider (ruuvi_driver_sensor_t * const
+rt_sensor_ctx_t * rt_sensor_find_provider (rt_sensor_ctx_t * const
         sensor_list, const size_t count, ruuvi_driver_sensor_data_fields_t values);
 
 /*@}*/

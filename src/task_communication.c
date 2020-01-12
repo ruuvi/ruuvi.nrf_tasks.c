@@ -1,7 +1,6 @@
 #include "ruuvi_boards.h"
 #include "ruuvi_driver_error.h"
 #include "ruuvi_driver_sensor.h"
-#include "ruuvi_endpoints.h"
 #include "ruuvi_interface_communication.h"
 #include "ruuvi_interface_log.h"
 #include "ruuvi_interface_rtc.h"
@@ -9,10 +8,6 @@
 #include "ruuvi_interface_timer.h"
 #include "ruuvi_interface_watchdog.h"
 #include "ruuvi_interface_yield.h"
-
-#include "task_acceleration.h"
-#include "task_adc.h"
-#include "task_environmental.h"
 #include "task_rtc.h"
 #include "task_sensor.h"
 
@@ -30,7 +25,7 @@ m_heartbeat_data_max_len;  //!< Maximum data length for heartbeat data
 static ruuvi_interface_communication_xfer_fp_t
 heartbeat_target; //!< Function to which send the hearbeat data
 static heartbeat_data_fp_t heartbeat_encoder;
-
+/*
 static ruuvi_driver_status_t task_communication_target_api_get (
     task_communication_api_t ** api, uint8_t target)
 {
@@ -181,7 +176,7 @@ ruuvi_driver_status_t task_communication_on_data (const
 
     return err_code;
 }
-
+*/
 static void heartbeat_send (void * p_event_data, uint16_t event_size)
 {
     ruuvi_interface_communication_message_t msg = {0};

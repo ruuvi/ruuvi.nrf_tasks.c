@@ -1,6 +1,7 @@
 #include "ruuvi_driver_error.h"
 #include "ruuvi_driver_sensor.h"
 #include "ruuvi_interface_log.h"
+#include "task_flash.h"
 #include "task_sensor.h"
 
 #include <string.h>
@@ -21,7 +22,7 @@ static inline void LOGD (const char * const msg)
 
 static inline void LOGHEX (const char * const msg, const size_t len)
 {
-    ruuvi_interface_log_hex(TASK_SENSOR_LOG_LEVEL, msg, len):
+    ruuvi_interface_log_hex(TASK_SENSOR_LOG_LEVEL, msg, len);
 }
 
 /** @brief Initialize sensor CTX
@@ -65,6 +66,7 @@ ruuvi_driver_status_t rt_sensor_initialize (rt_sensor_ctx_t * const sensor)
  */
 ruuvi_driver_status_t rt_sensor_store (rt_sensor_ctx_t * const sensor)
 {
+    ruuvi_driver_status_t err_code = RUUVI_DRIVER_SUCCESS;
     if(NULL == sensor)
     {
         err_code |= RUUVI_DRIVER_ERROR_NULL;
@@ -127,21 +129,21 @@ ruuvi_driver_status_t rt_sensor_configure (rt_sensor_ctx_t * const sensor)
     {
         err_code |= RUUVI_DRIVER_ERROR_NULL;
     }
-    else if(NULL == sensor->sensor->configuration_set)
+    else if(NULL == sensor->sensor.configuration_set)
     {
         err_code |= RUUVI_DRIVER_ERROR_INVALID_STATE;
     }
     else
     {
     LOG ("\r\nAttempting to configure ");
-    LOG (sensor->sensor->name);
+    LOG (sensor->sensor.name);
     LOG (" with:\r\n");
     ruuvi_interface_log_sensor_configuration (TASK_SENSOR_LOG_LEVEL, 
-        sensor->configuration);
-    err_code |= sensor->sensor->configuration_set (sensor->sensor, sensor->configuration);
+        &(sensor->configuration), "");
+    err_code |= sensor->sensor.configuration_set (&(sensor->sensor), &(sensor->configuration));
     LOG ("Actual configuration:\r\n");
     ruuvi_interface_log_sensor_configuration (TASK_SENSOR_LOG_LEVEL, 
-        sensor->configuration);
+        &(sensor->configuration), "");
     }
     return err_code;
 }
@@ -167,7 +169,7 @@ ruuvi_driver_status_t rt_sensor_configure (rt_sensor_ctx_t * const sensor)
 rt_sensor_ctx_t * rt_sensor_find_backend (rt_sensor_ctx_t * const sensor_list,
         const size_t count, const char * const name)
 {
-    ruuvi_driver_sensor_t * p_sensor = NULL;
+    rt_sensor_ctx_t * p_sensor = NULL;
 
     for (size_t ii = 0; (count > ii) && (NULL == p_sensor); ii++)
     {
@@ -190,14 +192,14 @@ rt_sensor_ctx_t * rt_sensor_find_backend (rt_sensor_ctx_t * const sensor_list,
  *         returned
  * @return NULL if requested sensor was not found.
  */
-ruuvi_driver_sensor_t * rt_sensor_find_provider (ruuvi_driver_sensor_t * const
+rt_sensor_ctx_t * rt_sensor_find_provider (rt_sensor_ctx_t * const
         sensor_list, const size_t count, ruuvi_driver_sensor_data_fields_t values)
 {
-    ruuvi_driver_sensor_t * p_sensor = NULL;
+    rt_sensor_ctx_t * p_sensor = NULL;
 
     for (size_t ii = 0; (count > ii) && (NULL == p_sensor); ii++)
     {
-        if ((values & sensor_list[ii].sensor.provides) == values)
+        if ((values.bitfield & sensor_list[ii].sensor.provides.bitfield) == values.bitfield)
         {
             p_sensor = & (sensor_list[ii]);
         }
